@@ -25,20 +25,35 @@ const con = mysql.createConnection({
 });
 
 con.connect()
-// app.pool = pool;
+
+
+app.get("/getCardapio", async (req, res) => {
+
+  const result =  con.query("select * FROM cardapio", (error, rows, fields) => {
+     if (rows) {
+
+       return res.json(rows)
+     } else {
+       return res.status(500).send(error.toString());
+     }
+   });
+   console.log(result);
+ 
+ });
+
+
 
 app.get("/getUsers", async (req, res) => {
 
  const result =  con.query("select * FROM users", (error, rows, fields) => {
     if (rows) {
-      // console.log(rows);
       return res.json(rows)
     } else {
       return res.status(500).send(error.toString());
     }
   });
   console.log(result);
-  // return res.send(result)
+
 });
 app.get("/getUsers/:id", async (req, res) => {
 
