@@ -27,9 +27,10 @@ const con = mysql.createConnection({
 con.connect()
 
 
-app.get("/getCardapio", async (req, res) => {
+app.get("/getCardapio/:id_dieta", async (req, res) => {
+  const {id_dieta} = req.params;
 
-  const result =  con.query("select * FROM cardapio", (error, rows, fields) => {
+  const result =  con.query(`select * FROM cardapio where id_dieta = ${id_dieta}`, (error, rows, fields) => {
      if (rows) {
 
        return res.json(rows)
