@@ -142,6 +142,23 @@ app.post("/createCardapio", async (req, res) => {
   }
 });
 
+app.delete("/deleteUser/:id", async (req, res) => {
+  try{
+    con.connect(() => {
+      console.log("conncted");
+    })
+    const {id} = req.body
+    const deleteId = con.query(
+      `DELETE FROM users where ('${id.id}')`
+    )
+
+  }
+  catch(error){
+    console.log(error)
+    res.status(400).send(error)
+  }
+})
+
 
 
 app.listen(2222, () => {
