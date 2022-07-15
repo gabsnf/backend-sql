@@ -24,56 +24,51 @@ const con = mysql.createConnection({
   database: "nutricao",
 });
 
-con.connect()
-
+con.connect();
 
 app.get("/getCardapio/:id_dieta", async (req, res) => {
-  const {id_dieta} = req.params;
+  const { id_dieta } = req.params;
 
-  const result =  con.query(`select * FROM cardapio where id_dieta = ${id_dieta}`, (error, rows, fields) => {
-     if (rows) {
-
-       return res.json(rows)
-     } else {
-       return res.status(500).send(error.toString());
-     }
-   });
-   console.log(result);
- 
- });
-
-
+  const result = con.query(
+    `select * FROM cardapio where id_dieta = ${id_dieta}`,
+    (error, rows, fields) => {
+      if (rows) {
+        return res.json(rows);
+      } else {
+        return res.status(500).send(error.toString());
+      }
+    }
+  );
+  console.log(result);
+});
 
 app.get("/getUsers", async (req, res) => {
-
- const result =  con.query("select * FROM users", (error, rows, fields) => {
+  const result = con.query("select * FROM users", (error, rows, fields) => {
     if (rows) {
-      return res.json(rows)
+      return res.json(rows);
     } else {
       return res.status(500).send(error.toString());
     }
   });
   console.log(result);
-
 });
 app.get("/getUsers/:id", async (req, res) => {
+  const { id } = req.params;
 
-  const {id}= req.params;
-
- const result =  con.query(`select * FROM users where id = ${id}`, (error, rows, fields) => {
-    if (rows) {
-      // console.log(rows);
-      return res.json(rows)
-    } else {
-      return res.status(500).send(error.toString());
+  const result = con.query(
+    `select * FROM users where id = ${id}`,
+    (error, rows, fields) => {
+      if (rows) {
+        // console.log(rows);
+        return res.json(rows);
+      } else {
+        return res.status(500).send(error.toString());
+      }
     }
-  });
+  );
   console.log(result);
   // return res.send(result)
-
 });
-
-
 
 app.post("/createUser", async (req, res) => {
   try {
@@ -81,13 +76,15 @@ app.post("/createUser", async (req, res) => {
       console.log("connected");
     });
     const user = req.body;
-console.log(user.name)
+    const id_dieta = req.body;
+    const idade = req.body;
     const createUser = con.query(
-      `INSERT INTO users (name) VALUES ( '${user.name}')`,
+      `INSERT INTO users (name, id_dieta, idade) VALUES ( '${user.user}', '${id_dieta.dieta}', '${idade.idade}')`,
       (error, rows, fields) => {
         if (rows) {
           return res.status(200).json(rows);
         }
+        return res.status(500).json(error)
       }
     );
   } catch (error) {
@@ -95,6 +92,9 @@ console.log(user.name)
     res.status(400).send(error);
   }
 });
+
+
+
 
 app.put("/updateId_dieta", async (req, res) => {
   try {
@@ -109,7 +109,7 @@ app.put("/updateId_dieta", async (req, res) => {
         if (rows) {
           return res.status(200).json(rows);
         }
-        return res.status(500).json(error)
+        return res.status(500).json(error);
       }
     );
   } catch (error) {
@@ -118,12 +118,35 @@ app.put("/updateId_dieta", async (req, res) => {
   }
 });
 
+app.put("/upUsers/:id", async (req, res) => {
+  try {
+    con.connect(() => {
+      console.log("connected");
+    });
+    const {id} = req.params;
+    const {name, id_dieta, idade} = req.body;
+    const updateUser = con.query(
+      `UPDATE users SET name = ('${name}'), id_dieta = ('${id_dieta}'), idade = ('${idade}') WHERE  id = ('${id}')`, 
+      (error, rows, fields) => {
+        if (rows) {
+          return res.status(200).json(rows);
+        }
+        return res.status(500).json(error);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+});
+
+
 app.post("/createCardapio", async (req, res) => {
   try {
     con.connect(() => {
       console.log("connected");
     });
-    const cardapios  = req.body;
+    const cardapios = req.body;
     const peso = req.body;
     const type = req.body;
     const id_dieta = req.body;
@@ -143,23 +166,25 @@ app.post("/createCardapio", async (req, res) => {
 });
 
 app.delete("/deleteUser/:id", async (req, res) => {
-  try{
+  try {
     con.connect(() => {
       console.log("conncted");
-    })
-    const {id} = req.body
+    });
+    const {id} = req.params;
     const deleteId = con.query(
-      `DELETE FROM users where ('${id.id}')`
-    )
-
+      `DELETE FROM users where id = ('${id}')`,
+      (error, rows, fields) => {
+        if (rows) {
+          return res.status(200).json(rows);
+        }
+        return res.status(400).json(error);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
   }
-  catch(error){
-    console.log(error)
-    res.status(400).send(error)
-  }
-})
-
-
+});
 
 app.listen(2222, () => {
   console.log("miau");
