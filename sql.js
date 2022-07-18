@@ -186,6 +186,20 @@ app.delete("/deleteUser/:id", async (req, res) => {
   }
 });
 
+
+app.get("/getuserRef", async (req, res) => {
+  const result = con.query("SELECT * FROM user_refeicao", (error, rows, fields) => {
+    if (rows) {
+      return res.json(rows);
+    } else {
+      return res.status(500).send(error.toString());
+    }
+  });
+  console.log(result);
+});
+
+
+
 app.listen(2222, () => {
   console.log("miau");
 });
