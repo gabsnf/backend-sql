@@ -198,6 +198,20 @@ app.get("/getuserRef", async (req, res) => {
   console.log(result);
 });
 
+app.get("/getCardapio", async (req, res) => {
+  const result = con.query(
+    `select * FROM cardapio`,
+    (error, rows, fields) => {
+      if (rows) {
+        return res.json(rows);
+      } else {
+        return res.status(500).send(error.toString());
+      }
+    }
+  );
+  console.log(result);
+});
+
 
 
 app.listen(2222, () => {
